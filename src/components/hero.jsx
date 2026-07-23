@@ -60,7 +60,7 @@ export default function Hero({ onSwitchPage }) {
                 aria-label="See the work"
                 onClick={() => setOpenPopup("work")}
               >
-                <img src="/assets/artIcon.png" alt="" className="cta-icon" />
+                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
               </button>
               <button
                 type="button"
@@ -68,7 +68,7 @@ export default function Hero({ onSwitchPage }) {
                 aria-label="Start a project"
                 onClick={() => setOpenPopup("contact")}
               >
-                <img src="/assets/artIcon.png" alt="" className="cta-icon" />
+                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
               </button>
             </div>
           </div>
