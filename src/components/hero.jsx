@@ -3,11 +3,11 @@
 import React, { useState } from "react";
 import LogoMorph from "./logoMorph";
 import Modal from "./modal";
-
-
+import About from "./about";
+import ProjectT from "./projectsT";
 
 export default function Hero({ onSwitchPage }) {
-  const [openPopup, setOpenPopup] = useState(null); // null | "work" | "contact"
+  const [openPopup, setOpenPopup] = useState(null); // null | "about" | "projectsT"
 
   return (
     <main className="hero-wrap">
@@ -57,16 +57,16 @@ export default function Hero({ onSwitchPage }) {
               <button
                 type="button"
                 className="cta-btn icon-btn primary"
-                aria-label="See the work"
-                onClick={() => setOpenPopup("work")}
+                aria-label="About me"
+                onClick={() => setOpenPopup("about")}
               >
                 <img src="/assets/iconPH.png" alt="" className="cta-icon" />
               </button>
               <button
                 type="button"
                 className="cta-btn icon-btn secondary"
-                aria-label="Start a project"
-                onClick={() => setOpenPopup("contact")}
+                aria-label="See the work"
+                onClick={() => setOpenPopup("projectsT")}
               >
                 <img src="/assets/iconPH.png" alt="" className="cta-icon" />
               </button>
@@ -76,19 +76,19 @@ export default function Hero({ onSwitchPage }) {
       </div>
 
       <Modal
-        isOpen={openPopup === "work"}
+        isOpen={openPopup === "about"}
         onClose={() => setOpenPopup(null)}
-        title="My Work"
+        title="About me"
       >
-        <p>A few things I've built — swap this out with real project links, thumbnails, or a short list.</p>
+        <About />
       </Modal>
 
       <Modal
-        isOpen={openPopup === "contact"}
+        isOpen={openPopup === "projectsT"}
         onClose={() => setOpenPopup(null)}
-        title="Let's talk"
+        title="Projects"
       >
-        <p>Reach me at <a href="mailto:you@example.com">you@example.com</a> or drop a message below.</p>
+        <ProjectT />
       </Modal>
     </main>
   );

@@ -1,11 +1,14 @@
 'use client';
 
-import React from "react";
+import React, { useState } from "react";
 import LogoMorph from "./logoMorph";
 import Modal from "./modal";
+import PortfolioA from "./portfolioA";       // fixed typo: porfolioA -> portfolioA
 
 
 export default function HeroAlt({ onSwitchPage }) {
+  const [openPopup, setOpenPopup] = useState(null); // null | "about" | "work"
+
   return (
     <main className="hero-wrap">
       <div className="ring-wrap" aria-hidden="true">
@@ -51,16 +54,36 @@ export default function HeroAlt({ onSwitchPage }) {
               Illustrator, Character Designer
             </p>
             <div className="cta-row">
-              <a className="cta-btn primary" href="#work">
-                View portfolio
-              </a>
-              <a className="cta-btn secondary" href="#contact">
-                Get in touch
-              </a>
+              <button
+                type="button"
+                className="cta-btn icon-btn primary"
+                aria-label="About me"
+                onClick={() => setOpenPopup("about")}
+              >
+                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
+              </button>
+              <button
+                type="button"
+                className="cta-btn icon-btn secondary"
+                aria-label="See the work"
+                onClick={() => setOpenPopup("work")}
+              >
+                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
+              </button>
             </div>
           </div>
         </section>
       </div>
+
+      <Modal
+        isOpen={openPopup === "about"}
+        onClose={() => setOpenPopup(null)}
+        title="About me"
+      >
+        <PortfolioA />
+      </Modal>
+
+      
     </main>
   );
 }

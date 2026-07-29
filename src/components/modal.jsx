@@ -1,6 +1,10 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useId } from "react";
+
+// module-level stack shared by all Modal instances —
+// tracks which modals are currently open, in open-order
+const openModalStack = [];
 
 /**
  * Modal
@@ -14,6 +18,8 @@ import React, { useEffect, useRef, useState } from "react";
  * Pass `blocking={false}` to make it a floating panel instead — no
  * overlay, rest of the page stays fully interactive.
  *
+ * Escape closes only the topmost open modal in a nested stack.
+ *
  * Usage:
  *   const [openPopup, setOpenPopup] = useState(null);
  *
@@ -25,21 +31,37 @@ export default function Modal({ isOpen, onClose, title, children, blocking = tru
   const [dragPos, setDragPos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
   const dragStart = useRef({ x: 0, y: 0, baseX: 0, baseY: 0 });
+  const modalId = useId();
 
   // reset position every time the modal opens
   useEffect(() => {
     if (isOpen) setDragPos({ x: 0, y: 0 });
   }, [isOpen]);
 
-  // close on Escape key
+  // register/unregister this modal on the shared open-stack
+  useEffect(() => {
+    if (isOpen) {
+      openModalStack.push(modalId);
+    }
+    return () => {
+      const idx = openModalStack.indexOf(modalId);
+      if (idx !== -1) openModalStack.splice(idx, 1);
+    };
+  }, [isOpen, modalId]);
+
+  // close on Escape key — only if this modal is topmost
   useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e) => {
-      if (e.key === "Escape") onClose();
+      if (e.key !== "Escape") return;
+      const topModalId = openModalStack[openModalStack.length - 1];
+      if (topModalId === modalId) {
+        onClose();
+      }
     };
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, modalId]);
 
   // drag tracking — only active while isDragging is true
   useEffect(() => {
