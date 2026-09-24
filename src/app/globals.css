@@ -1,5 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Space+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Overlock:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&display=swap');
+
+/* Montserrat and Overlock are loaded with next/font in layout.js
+   and exposed as --font-montserrat and --font-overlock */
 
 html, body {
   height: 100%;
@@ -47,7 +49,6 @@ body {
 .hero-card {
   position: relative;
   width: 600px;
-  height: 400;
   background: #F4EFE4;
   color: #3c3b39;
   border-radius: 5px;
@@ -82,7 +83,7 @@ body {
 .dot-3 { background: #e85c5c; }
 
 .window-label {
-  font-family: 'Overlock', sans-serif;
+  font-family: var(--font-overlock), sans-serif;
   font-size: 15px;
   color: #C9C5DC;
   letter-spacing: 0.01em;
@@ -103,7 +104,6 @@ body {
 }
 
 .hero-name {
-  font-family: 'Baloo 2', sans-serif;
   font-weight: 700;
   font-size: 52px;
   margin: 40px 0 16px;
@@ -112,11 +112,13 @@ body {
 
 .hero-name-muted {
   color: #6B6870;
-  font-family: 'Overlock', sans-serif;
-  font-weight: lighter;
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 300;
 }
 
 .hero-name-accent {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 700;
   color: #ff5a5a;
 }
 
@@ -146,12 +148,15 @@ body {
 
 .cta-btn.icon-btn {
   width: 80px;
-  height: 80px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
-  border-radius: 50%;
+  border-radius: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
   transition: transform 0.15s ease;
 }
 
@@ -159,9 +164,23 @@ body {
   transform: translateY(-1.5px);
 }
 
+.cta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0px;
+}
+
+.cta-label {
+  font-family: var(--font-montserrat), sans-serif;
+  font-size: 15px;
+  color: #4A4760;
+  letter-spacing: 0.02em;
+}
+
 .cta-icon {
-  width: 50px;
-  height: 50px;
+  width: 72px;
+  height: 56px;
   object-fit: contain;
 }
 
@@ -480,15 +499,6 @@ body {
 .about-job-company {
   display: inline-block;
   margin-top: 0;
-}
-
-.about-portrait-wrap {
-  position: relative;
-  width: 72px;
-  height: 72px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  overflow: hidden;
 }
 
 

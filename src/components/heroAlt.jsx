@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import LogoMorph from "./logoMorph";
 import Modal from "./modal";
-import PortfolioA from "./portfolioA";       // fixed typo: porfolioA -> portfolioA
-
+import PortfolioA from "./portfolioA";
+import aboutIcon from "./icons/About_Icon.svg";
+import workIcon from "./icons/Portfolio_Icon_2.svg";
 
 export default function HeroAlt({ onSwitchPage }) {
-  const [openPopup, setOpenPopup] = useState(null); // null | "about" | "work"
+  const [openPopup, setOpenPopup] = useState(null); // null | "about" | "works"
 
   return (
     <main className="hero-wrap">
@@ -53,37 +54,45 @@ export default function HeroAlt({ onSwitchPage }) {
             <p className="tagline">
               Illustrator, Character Designer
             </p>
+
             <div className="cta-row">
-              <button
-                type="button"
-                className="cta-btn icon-btn primary"
-                aria-label="About me"
-                onClick={() => setOpenPopup("about")}
-              >
-                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
-              </button>
-              <button
-                type="button"
-                className="cta-btn icon-btn secondary"
-                aria-label="See the work"
-                onClick={() => setOpenPopup("work")}
-              >
-                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
-              </button>
+              <div className="cta-item">
+                <button
+                  type="button"
+                  className="cta-btn icon-btn primary"
+                  aria-label="About me"
+                  onClick={() => setOpenPopup("about")}
+                >
+                  <img src={aboutIcon.src} alt="" className="cta-icon" />
+                </button>
+                <span className="cta-label">About</span>
+              </div>
+
+              <div className="cta-item">
+                <button
+                  type="button"
+                  className="cta-btn icon-btn secondary"
+                  aria-label="Works"
+                  onClick={() => setOpenPopup("works")}
+                >
+                  <img src={workIcon.src} alt="" className="cta-icon" />
+                </button>
+                <span className="cta-label">works</span>
+              </div>
             </div>
           </div>
         </section>
       </div>
 
       <Modal
-        isOpen={openPopup === "about"}
+        isOpen={openPopup === "works"}
         onClose={() => setOpenPopup(null)}
-        title="About me"
+        title="Works"
       >
         <PortfolioA />
       </Modal>
 
-      
+      {/* TODO: add a <Modal isOpen={openPopup === "about"} ...> here for the About button */}
     </main>
   );
 }

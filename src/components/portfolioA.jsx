@@ -48,52 +48,56 @@ export default function PortfolioA() {
     setActiveIndex((i) => (i - 1 + illustrations.length) % illustrations.length);
 
   const activePiece = activeIndex !== null ? illustrations[activeIndex] : null;
+  const activeImage = activePiece ? fileUrl(activePiece.full_file_id) : null;
 
   return (
     <div className="about-content">
-      <div className="about-top">
-        <div className="about-portrait-wrap">
-          <Image
-            src="/assets/portrait.png"
-            alt="Portrait of Vod"
-            fill
-            sizes="72px"
-            className="about-portrait"
-          />
-        </div>
-        <div className="header">
-          <h3 className="about-name">Vod</h3>
-          <p className="about-summary">
-            Anime-inspired semi-realistic illustrations, character design, and concept art.
-            I enjoy creating expressive characters and exploring different themes and ideas through fantastical or realistic settings.
-          </p>
-        </div>
-      </div>
-
       <div className="about-scroll">
-        <h4 className="about-scroll-heading">Illustration</h4>
+        <h4 className="about-scroll-heading">Featured Illustrations</h4>
 
         {loading ? (
           <p className="modal-desc">Loading…</p>
         ) : activePiece ? (
           <div className="artwork-view">
-            <div className="modal-image-wrap">
-              <Image
-                src={fileUrl(activePiece.full_file_id)}
-                alt={activePiece.title}
-                fill
-                sizes="320px"
-                className="modal-image"
-                priority
-              />
-            </div>
+            {activeImage && (
+              <div className="modal-image-wrap">
+                <Image
+                  src={activeImage}
+                  alt={activePiece.title}
+                  fill
+                  sizes="320px"
+                  className="modal-image"
+                  priority
+                />
+              </div>
+            )}
+
             <div className="modal-title-row">
               <p className="modal-primary">{activePiece.title}</p>
-              <span className="modal-date-inline">{activePiece.date}</span>
+              {activePiece.date && (
+                <span className="modal-date-inline">{activePiece.date}</span>
+              )}
             </div>
-            <p className="modal-secondary">{activePiece.description}</p>
-            <p className="modal-secondary">{activePiece.tools?.join(", ")}</p>
-            <p className="modal-secondary">{activePiece.social_link}</p>
+
+            {activePiece.description && (
+              <p className="modal-secondary">{activePiece.description}</p>
+            )}
+
+            {activePiece.tools?.length > 0 && (
+              <p className="modal-secondary">{activePiece.tools.join(", ")}</p>
+            )}
+
+            {activePiece.social_link && (
+              <a
+                className="modal-social-link"
+                href={activePiece.social_link}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {activePiece.social_link}
+              </a>
+            )}
+
             <div className="modal-nav">
               <button onClick={showPrev}>← prev</button>
               <button onClick={closePiece}>close</button>
@@ -104,31 +108,40 @@ export default function PortfolioA() {
           <p className="modal-desc">No pieces added yet.</p>
         ) : (
           <div className="work-grid">
-            {illustrations.map((piece, index) => (
-              <button
-                key={piece.$id}
-                className="work-thumb"
-                onClick={() => openPiece(index)}
-                aria-label={`Open ${piece.title}`}
-              >
-                <Image
-                  src={fileUrl(piece.thumbnail_file_id)}
-                  alt={piece.title}
-                  fill
-                  sizes="(max-width: 768px) 33vw, 250px"
-                  className="work-thumb-img"
-                />
-              </button>
-            ))}
+            {illustrations.map((piece, index) => {
+              const thumb = fileUrl(piece.thumbnail_file_id);
+              return (
+                <button
+                  key={piece.$id}
+                  className="work-thumb"
+                  onClick={() => openPiece(index)}
+                  aria-label={`Open ${piece.title}`}
+                >
+                  {thumb && (
+                    <Image
+                      src={thumb}
+                      alt={piece.title}
+                      fill
+                      sizes="(max-width: 768px) 33vw, 250px"
+                      className="work-thumb-img"
+                    />
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
 
-        <h4 className="about-scroll-heading">Tools/Software</h4>
-        <ul className="about-skills">
-          {tools.map((tool) => (
-            <li key={tool}>{tool}</li>
-          ))}
-        </ul>
+        {!activePiece && (
+          <>
+            <h4 className="about-scroll-heading">Tools/Software</h4>
+            <ul className="about-skills">
+              {tools.map((tool) => (
+                <li key={tool}>{tool}</li>
+              ))}
+            </ul>
+          </>
+        )}
       </div>
     </div>
   );
