@@ -1,8 +1,7 @@
-'use client';
+"use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { account } from "@/lib/appwrite";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -17,10 +16,25 @@ export default function AdminLogin() {
     setLoading(true);
 
     try {
-      await account.createEmailPasswordSession(email, password);
-      router.push("/admin");
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "same-origin",
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.error || "Unable to sign in.");
+      }
+
+      router.replace("/admin");
+      router.refresh();
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Unable to sign in.");
     } finally {
       setLoading(false);
     }
@@ -30,16 +44,36 @@ export default function AdminLogin() {
     <div className="admin-login-wrap">
       <form className="admin-login-form" onSubmit={handleSubmit}>
         <h1 className="admin-login-title">Admin login</h1>
+
         <label className="admin-field">
           <span>Email</span>
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
+            required
+          />
         </label>
+
         <label className="admin-field">
           <span>Password</span>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+          />
         </label>
+
         {error && <p className="admin-error">{error}</p>}
-        <button type="submit" className="admin-submit-btn" disabled={loading}>
+
+        <button
+          type="submit"
+          className="admin-submit-btn"
+          disabled={loading}
+        >
           {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>

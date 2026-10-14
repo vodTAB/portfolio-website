@@ -1,0 +1,25 @@
+
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "portfolio-next",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-10-13",
+  "compatibility_flags": ["nodejs_compat"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "portfolio",
+      "database_id": "a5d9f9b4-58e2-447c-b8e0-c3b559262a82"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "IMAGES",
+      "bucket_name": "illustrations"
+    }
+  ]
+}

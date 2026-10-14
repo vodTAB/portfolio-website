@@ -14,25 +14,15 @@ const projects = [
 ];
 
 const skills = [
-    "JavaScript / React",
+    "JavaScript / React / Next.js",
     "HTML & CSS",
     "Python",
-    "Git & version control",
+    "Databse Design and SQL",
 ];
 
 export default function ProjectT() {
     return (
         <div className="about-content">
-            <div className="about-top">
-                <img src="/assets/portrait.png" alt="Portrait of Vod" className="about-portrait" />
-                <div className="header">
-                    <h3 className="about-name">Vod</h3>
-                    <p className="about-summary">
-                        Student studying Computer Science, focused on front-end
-                        development and building clean, interactive interfaces.
-                    </p>
-                </div>
-            </div>
 
             <div className="about-scroll">
                 <h4 className="about-scroll-heading">Projects</h4>

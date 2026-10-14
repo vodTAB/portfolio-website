@@ -98,19 +98,24 @@ export default function Modal({ isOpen, onClose, title, children, blocking = tru
       role="dialog"
       aria-modal={blocking}
       aria-labelledby="modal-title"
-      onClick={(e) => e.stopPropagation()}
       style={{ transform: `translate(${dragPos.x}px, ${dragPos.y}px)` }}
     >
       <div className="modal-header" onPointerDown={startDrag}>
-        <h2 id="modal-title" className="modal-title">{title}</h2>
-        <button
-          type="button"
-          className="modal-close"
-          onClick={onClose}
+        <span className="modal-title">{title}</span>
+        <div
+          className="modal-dots"
+          onClick={(e) => {
+            e.stopPropagation();
+            onClose();
+          }}
+          role="button"
           aria-label="Close"
+          style={{ cursor: "pointer" }}
         >
-          &times;
-        </button>
+          <span className="dot dot-1" />
+          <span className="dot dot-2" />
+          <span className="dot dot-3" />
+        </div>
       </div>
       <div className="modal-content">{children}</div>
     </div>
@@ -121,7 +126,7 @@ export default function Modal({ isOpen, onClose, title, children, blocking = tru
   }
 
   return (
-    <div className="modal-overlay" onClick={onClose} role="presentation">
+    <div className="modal-overlay" role="presentation">
       {box}
     </div>
   );

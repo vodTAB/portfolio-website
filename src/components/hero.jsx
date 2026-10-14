@@ -1,13 +1,27 @@
 'use client';
 
 import React, { useState } from "react";
-import LogoMorph from "./logoMorph";
 import Modal from "./modal";
 import About from "./about";
 import ProjectT from "./projectsT";
+import pinIcon from "./icons/pinIcon.svg";
+import aboutIcon from "./icons/About_Icon.svg";
+import projectIcon from "./icons/Projects_Icon.svg";
 
 export default function Hero({ onSwitchPage }) {
-  const [openPopup, setOpenPopup] = useState(null); // null | "about" | "projectsT"
+  const [openPopups, setOpenPopups] = useState(new Set());
+
+  const openModal = (key) => {
+    setOpenPopups((prev) => new Set(prev).add(key));
+  };
+
+  const closeModal = (key) => {
+    setOpenPopups((prev) => {
+      const next = new Set(prev);
+      next.delete(key);
+      return next;
+    });
+  };
 
   return (
     <main className="hero-wrap">
@@ -38,12 +52,14 @@ export default function Hero({ onSwitchPage }) {
 
           <div className="window-body">
             <div className="logo-morph-corner">
-              <LogoMorph
-                logoA="/assets/techIcon.png"
-                logoB="/assets/artIcon.png"
-                alt="Vod"
+              <button
+                type="button"
+                className="logo-morph-btn"
                 onClick={onSwitchPage}
-              />
+                aria-label="Switch page"
+              >
+                <img src={pinIcon.src} alt="" className="pin-icon" />
+              </button>
             </div>
 
             <h1 className="hero-name">
@@ -58,17 +74,17 @@ export default function Hero({ onSwitchPage }) {
                 type="button"
                 className="cta-btn icon-btn primary"
                 aria-label="About me"
-                onClick={() => setOpenPopup("about")}
+                onClick={() => openModal("about")}
               >
-                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
+                <img src={aboutIcon.src} alt="" className="cta-icon" />
               </button>
               <button
                 type="button"
                 className="cta-btn icon-btn secondary"
                 aria-label="See the work"
-                onClick={() => setOpenPopup("projectsT")}
+                onClick={() => openModal("projectsT")}
               >
-                <img src="/assets/iconPH.png" alt="" className="cta-icon" />
+                <img src={projectIcon.src} alt="" className="cta-icon" />
               </button>
             </div>
           </div>
@@ -76,16 +92,16 @@ export default function Hero({ onSwitchPage }) {
       </div>
 
       <Modal
-        isOpen={openPopup === "about"}
-        onClose={() => setOpenPopup(null)}
+        isOpen={openPopups.has("about")}
+        onClose={() => closeModal("about")}
         title="About me"
       >
         <About />
       </Modal>
 
       <Modal
-        isOpen={openPopup === "projectsT"}
-        onClose={() => setOpenPopup(null)}
+        isOpen={openPopups.has("projectsT")}
+        onClose={() => closeModal("projectsT")}
         title="Projects"
       >
         <ProjectT />

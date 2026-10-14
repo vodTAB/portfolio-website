@@ -1,14 +1,31 @@
 'use client';
 
 import React, { useState } from "react";
-import LogoMorph from "./logoMorph";
 import Modal from "./modal";
 import PortfolioA from "./portfolioA";
+import AboutA from "./aboutA";
+import LinksA from "./linksa";
+import ContactA from "./contactA";
 import aboutIcon from "./icons/About_Icon.svg";
-import workIcon from "./icons/Portfolio_Icon_2.svg";
+import workIcon from "./icons/Portfolio_Pieces_Icon.svg";
+import pinIcon from "./icons/pinIcon.svg";
+import linksIcon from "./icons/links_icon.svg";
+import contactIcon from "./icons/contactIcon.svg";
 
 export default function HeroAlt({ onSwitchPage }) {
-  const [openPopup, setOpenPopup] = useState(null); // null | "about" | "works"
+  const [openPopups, setOpenPopups] = useState(new Set());
+
+  const openModal = (key) => {
+    setOpenPopups((prev) => new Set(prev).add(key));
+  };
+
+  const closeModal = (key) => {
+    setOpenPopups((prev) => {
+      const next = new Set(prev);
+      next.delete(key);
+      return next;
+    });
+  };
 
   return (
     <main className="hero-wrap">
@@ -39,12 +56,14 @@ export default function HeroAlt({ onSwitchPage }) {
 
           <div className="window-body">
             <div className="logo-morph-corner">
-              <LogoMorph
-                logoA="/assets/artIcon.png"
-                logoB="/assets/techIcon.png"
-                alt="Vod"
+              <button
+                type="button"
+                className="logo-morph-btn"
                 onClick={onSwitchPage}
-              />
+                aria-label="Switch page"
+              >
+                <img src={pinIcon.src} alt="" className="pin-icon" />
+              </button>
             </div>
 
             <h1 className="hero-name">
@@ -61,11 +80,10 @@ export default function HeroAlt({ onSwitchPage }) {
                   type="button"
                   className="cta-btn icon-btn primary"
                   aria-label="About me"
-                  onClick={() => setOpenPopup("about")}
+                  onClick={() => openModal("about")}
                 >
                   <img src={aboutIcon.src} alt="" className="cta-icon" />
                 </button>
-                <span className="cta-label">About</span>
               </div>
 
               <div className="cta-item">
@@ -73,11 +91,32 @@ export default function HeroAlt({ onSwitchPage }) {
                   type="button"
                   className="cta-btn icon-btn secondary"
                   aria-label="Works"
-                  onClick={() => setOpenPopup("works")}
+                  onClick={() => openModal("works")}
                 >
                   <img src={workIcon.src} alt="" className="cta-icon" />
                 </button>
-                <span className="cta-label">works</span>
+              </div>
+
+              <div className="cta-item">
+                <button
+                  type="button"
+                  className="cta-btn icon-btn secondary"
+                  aria-label="Links"
+                  onClick={() => openModal("links")}
+                >
+                  <img src={linksIcon.src} alt="" className="cta-icon" />
+                </button>
+              </div>
+
+              <div className="cta-item">
+                <button
+                  type="button"
+                  className="cta-btn icon-btn"
+                  aria-label="Contact"
+                  onClick={() => openModal("contact")}
+                >
+                  <img src={contactIcon.src} alt="" className="cta-icon" />
+                </button>
               </div>
             </div>
           </div>
@@ -85,14 +124,36 @@ export default function HeroAlt({ onSwitchPage }) {
       </div>
 
       <Modal
-        isOpen={openPopup === "works"}
-        onClose={() => setOpenPopup(null)}
-        title="Works"
+        isOpen={openPopups.has("works")}
+        onClose={() => closeModal("works")}
+        title="My Works"
       >
         <PortfolioA />
       </Modal>
 
-      {/* TODO: add a <Modal isOpen={openPopup === "about"} ...> here for the About button */}
+      <Modal
+        isOpen={openPopups.has("about")}
+        onClose={() => closeModal("about")}
+        title="About Me"
+      >
+        <AboutA onOpenWorks={() => openModal("works")} />
+      </Modal>
+
+      <Modal
+        isOpen={openPopups.has("links")}
+        onClose={() => closeModal("links")}
+        title="Links"
+      >
+        <LinksA />
+      </Modal>
+
+      <Modal
+        isOpen={openPopups.has("contact")}
+        onClose={() => closeModal("contact")}
+        title="Contact"
+      >
+        <ContactA />
+      </Modal>
     </main>
   );
 }

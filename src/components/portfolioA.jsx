@@ -1,54 +1,72 @@
-'use client';
+ 'use client';
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
-import { databases, storage } from "@/lib/appwrite";
-import { Query } from "appwrite";
+import clipLogo from "./icons/icons8-clip-studio-paint-100.svg";
+import blenderLogo from "./icons/icons8-blender-3d-100.svg";
 
 const tools = [
-  "Clip Studio Paint",
-  "Blender",
+  { name: "Clip Studio Paint", icon: clipLogo },
+  { name: "Blender", icon: blenderLogo },
 ];
-
-const DATABASE_ID = process.env.NEXT_PUBLIC_APPWRITE_DATABASE_ID;
-const COLLECTION_ID = process.env.NEXT_PUBLIC_APPWRITE_COLLECTION_ILLUSTRATIONS_ID;
-const BUCKET_ID = process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID;
-
-const fileUrl = (fileId) =>
-  fileId ? storage.getFileView(BUCKET_ID, fileId) : null;
 
 export default function PortfolioA() {
   const [illustrations, setIllustrations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
 
   useEffect(() => {
     const load = async () => {
       try {
-        const res = await databases.listDocuments(
-          DATABASE_ID,
-          COLLECTION_ID,
-          [Query.orderAsc("sort_order")]
-        );
-        setIllustrations(res.documents);
+        const res = await fetch("/api/illustrations");
+
+        if (!res.ok) {
+          throw new Error(`Request failed: ${res.status}`);
+        }
+
+        const data = await res.json();
+        setIllustrations(data);
       } catch (err) {
         console.error("Failed to load illustrations:", err);
+        setError("Couldn't load illustrations right now — please try again later.");
       } finally {
         setLoading(false);
       }
     };
+
     load();
   }, []);
 
   const openPiece = (index) => setActiveIndex(index);
   const closePiece = () => setActiveIndex(null);
-  const showNext = () =>
-    setActiveIndex((i) => (i + 1) % illustrations.length);
-  const showPrev = () =>
-    setActiveIndex((i) => (i - 1 + illustrations.length) % illustrations.length);
 
-  const activePiece = activeIndex !== null ? illustrations[activeIndex] : null;
-  const activeImage = activePiece ? fileUrl(activePiece.full_file_id) : null;
+  const showNext = () => {
+    setActiveIndex((i) =>
+      i === null ? null : (i + 1) % illustrations.length
+    );
+  };
+
+  const showPrev = () => {
+    setActiveIndex((i) =>
+      i === null
+        ? null
+        : (i - 1 + illustrations.length) % illustrations.length
+    );
+  };
+
+  const activePiece =
+    activeIndex !== null ? illustrations[activeIndex] : null;
+
+  const thumbnailUrl = (piece) =>
+    piece?.id
+      ? `/api/illustrations/${piece.id}/thumbnail`
+      : null;
+
+  const fullImageUrl = (piece) =>
+    piece?.id
+      ? `/api/illustrations/${piece.id}/full`
+      : null;
 
   return (
     <div className="about-content">
@@ -57,34 +75,42 @@ export default function PortfolioA() {
 
         {loading ? (
           <p className="modal-desc">Loading…</p>
+        ) : error ? (
+          <p className="modal-desc">{error}</p>
         ) : activePiece ? (
           <div className="artwork-view">
-            {activeImage && (
-              <div className="modal-image-wrap">
-                <Image
-                  src={activeImage}
-                  alt={activePiece.title}
-                  fill
-                  sizes="320px"
-                  className="modal-image"
-                  priority
-                />
-              </div>
-            )}
+            <div className="modal-image-wrap">
+              <Image
+                src={fullImageUrl(activePiece)}
+                alt={activePiece.title}
+                fill
+                sizes="(max-width: 768px) 90vw, 600px"
+                className="modal-image"
+                priority
+                unoptimized
+              />
+            </div>
 
             <div className="modal-title-row">
               <p className="modal-primary">{activePiece.title}</p>
+
               {activePiece.date && (
-                <span className="modal-date-inline">{activePiece.date}</span>
+                <span className="modal-date-inline">
+                  {activePiece.date}
+                </span>
               )}
             </div>
 
             {activePiece.description && (
-              <p className="modal-secondary">{activePiece.description}</p>
+              <p className="modal-secondary">
+                {activePiece.description}
+              </p>
             )}
 
             {activePiece.tools?.length > 0 && (
-              <p className="modal-secondary">{activePiece.tools.join(", ")}</p>
+              <p className="modal-secondary">
+                {activePiece.tools.join(", ")}
+              </p>
             )}
 
             {activePiece.social_link && (
@@ -108,36 +134,40 @@ export default function PortfolioA() {
           <p className="modal-desc">No pieces added yet.</p>
         ) : (
           <div className="work-grid">
-            {illustrations.map((piece, index) => {
-              const thumb = fileUrl(piece.thumbnail_file_id);
-              return (
-                <button
-                  key={piece.$id}
-                  className="work-thumb"
-                  onClick={() => openPiece(index)}
-                  aria-label={`Open ${piece.title}`}
-                >
-                  {thumb && (
-                    <Image
-                      src={thumb}
-                      alt={piece.title}
-                      fill
-                      sizes="(max-width: 768px) 33vw, 250px"
-                      className="work-thumb-img"
-                    />
-                  )}
-                </button>
-              );
-            })}
+            {illustrations.map((piece, index) => (
+              <button
+                key={piece.id}
+                className="work-thumb"
+                onClick={() => openPiece(index)}
+                aria-label={`Open ${piece.title}`}
+              >
+                <Image
+                  src={thumbnailUrl(piece)}
+                  alt={piece.title}
+                  fill
+                  sizes="(max-width: 768px) 33vw, 250px"
+                  className="work-thumb-img"
+                  unoptimized
+                />
+              </button>
+            ))}
           </div>
         )}
 
         {!activePiece && (
           <>
             <h4 className="about-scroll-heading">Tools/Software</h4>
+
             <ul className="about-skills">
               {tools.map((tool) => (
-                <li key={tool}>{tool}</li>
+                <li key={tool.name}>
+                  <img
+                    src={tool.icon.src}
+                    alt=""
+                    className="tools-used-icon"
+                  />
+                  {tool.name}
+                </li>
               ))}
             </ul>
           </>
