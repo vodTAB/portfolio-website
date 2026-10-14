@@ -18,6 +18,7 @@ function isImageFile(file) {
   );
 }
 
+
 export async function GET() {
   try {
     const { env } = await getCloudflareContext({ async: true });
@@ -25,8 +26,7 @@ export async function GET() {
     const { results } = await env.DB
       .prepare(
         `SELECT id, title, description, date, tools, sort_order,
-                thumbnail_file_id, full_file_id, social_link,
-                created_at, updated_at
+                thumbnail_key, full_key, social_link, created_at
          FROM illustrations
          ORDER BY sort_order ASC`
       )
@@ -35,7 +35,7 @@ export async function GET() {
     const illustrations = results.map((row) => ({
       ...row,
       tools: row.tools ? JSON.parse(row.tools) : [],
-      thumbnail_url: row.thumbnail_file_id
+      thumbnail_url: row.thumbnail_key
         ? `/api/illustrations/${row.id}/thumbnail`
         : null,
     }));
@@ -48,6 +48,7 @@ export async function GET() {
     return jsonError("Failed to fetch illustrations.", 500);
   }
 }
+
 
 export async function POST(request) {
   let thumbnailKey;
