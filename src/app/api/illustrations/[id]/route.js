@@ -25,7 +25,7 @@ export async function DELETE(request, { params }) {
 
     const illustration = await env.DB
       .prepare(
-        `SELECT thumbnail_file_id, full_file_id
+        `SELECT thumbnail_key, full_key
          FROM illustrations
          WHERE id = ?`
       )
@@ -39,16 +39,14 @@ export async function DELETE(request, { params }) {
       );
     }
 
-    // Delete the database record first so it no longer appears in the portfolio.
     await env.DB
       .prepare("DELETE FROM illustrations WHERE id = ?")
       .bind(id)
       .run();
 
-    // Then remove the associated files from R2.
     const keys = [
-      illustration.thumbnail_file_id,
-      illustration.full_file_id,
+      illustration.thumbnail_key,
+      illustration.full_key,
     ].filter(Boolean);
 
     if (keys.length > 0) {
