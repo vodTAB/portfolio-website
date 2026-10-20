@@ -1,4 +1,4 @@
- 'use client';
+'use client';
 
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
@@ -21,9 +21,16 @@ export default function PortfolioA() {
       try {
         const res = await fetch("/api/illustrations");
 
+
         if (!res.ok) {
-          throw new Error(`Request failed: ${res.status}`);
+          const errorText = await res.text();
+
+          console.error("Illustrations API status:", res.status);
+          console.error("Illustrations API response:", errorText);
+
+          throw new Error(`Request failed: ${res.status} - ${errorText}`);
         }
+
 
         const data = await res.json();
         setIllustrations(data);

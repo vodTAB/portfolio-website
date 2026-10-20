@@ -5,7 +5,7 @@ import clipLogo from "./icons/clip_studio_logo.svg";
 import blenderLogo from "./icons/blender_logo.svg";
 
 
-export default function AboutA({ onOpenWorks }) {
+export default function AboutA({ onOpenWorks, onOpenContact }) {
   return (
     <div className="about-wrap">
       <img src="/assets/about-portrait.png" alt="Vod" className="about-portrait" />
@@ -37,10 +37,18 @@ export default function AboutA({ onOpenWorks }) {
           <img src={blenderLogo.src} alt="Blender" className="tool-logo" />
         </div>
         <p>
-          Interested? any questions for me? contact me at {" "}
-          <a href="mailto:ohnyoluckimii@gmail.com" target="_blank" rel="noopener noreferrer">
-            ohnyoluckimii@gmail.com
-          </a>.
+          Interested? any questions for me?{" "}
+          <a
+            href="#"
+            className="inline-link"
+            onClick={(e) => {
+              e.preventDefault();
+              onOpenContact();
+            }}
+          >
+            contact me
+          </a>
+          .
         </p>
       </div>
     </div>

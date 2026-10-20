@@ -12,8 +12,25 @@ import pinIcon from "./icons/pinIcon.svg";
 import linksIcon from "./icons/links_icon.svg";
 import contactIcon from "./icons/contactIcon.svg";
 
+import useSound from 'use-sound';
+
 export default function HeroAlt({ onSwitchPage }) {
   const [openPopups, setOpenPopups] = useState(new Set());
+  const [play] = useSound('/sfx/buttonClick.mp3', {
+    volume: 0.4,
+    onload: () => console.log('sound loaded'),
+    onloaderror: (id, err) => console.error('sound load error', err),
+    onplayerror: (id, err) => console.error('sound play error', err),
+  });
+
+  // Plays on mouse/touch press and on Enter/Space for keyboard users.
+  // Keyboard activation doesn't fire pointerdown, so there's no double-play.
+  const soundProps = {
+    onPointerDown: () => play(),
+    onKeyDown: (e) => {
+      if (!e.repeat && (e.key === 'Enter' || e.key === ' ')) play();
+    },
+  };
 
   const openModal = (key) => {
     setOpenPopups((prev) => new Set(prev).add(key));
@@ -59,6 +76,7 @@ export default function HeroAlt({ onSwitchPage }) {
               <button
                 type="button"
                 className="logo-morph-btn"
+                {...soundProps}
                 onClick={onSwitchPage}
                 aria-label="Switch page"
               >
@@ -80,6 +98,7 @@ export default function HeroAlt({ onSwitchPage }) {
                   type="button"
                   className="cta-btn icon-btn primary"
                   aria-label="About me"
+                  {...soundProps}
                   onClick={() => openModal("about")}
                 >
                   <img src={aboutIcon.src} alt="" className="cta-icon" />
@@ -89,8 +108,9 @@ export default function HeroAlt({ onSwitchPage }) {
               <div className="cta-item">
                 <button
                   type="button"
-                  className="cta-btn icon-btn secondary"
-                  aria-label="Works"
+                  className="cta-btn icon-btn primary"
+                  aria-label="My works"
+                  {...soundProps}
                   onClick={() => openModal("works")}
                 >
                   <img src={workIcon.src} alt="" className="cta-icon" />
@@ -100,8 +120,9 @@ export default function HeroAlt({ onSwitchPage }) {
               <div className="cta-item">
                 <button
                   type="button"
-                  className="cta-btn icon-btn secondary"
+                  className="cta-btn icon-btn primary"
                   aria-label="Links"
+                  {...soundProps}
                   onClick={() => openModal("links")}
                 >
                   <img src={linksIcon.src} alt="" className="cta-icon" />
@@ -111,8 +132,9 @@ export default function HeroAlt({ onSwitchPage }) {
               <div className="cta-item">
                 <button
                   type="button"
-                  className="cta-btn icon-btn"
+                  className="cta-btn icon-btn primary"
                   aria-label="Contact"
+                  {...soundProps}
                   onClick={() => openModal("contact")}
                 >
                   <img src={contactIcon.src} alt="" className="cta-icon" />
@@ -136,7 +158,10 @@ export default function HeroAlt({ onSwitchPage }) {
         onClose={() => closeModal("about")}
         title="About Me"
       >
-        <AboutA onOpenWorks={() => openModal("works")} />
+        <AboutA
+          onOpenWorks={() => openModal("works")}
+          onOpenContact={() => openModal("contact")}
+        />
       </Modal>
 
       <Modal

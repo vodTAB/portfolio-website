@@ -469,17 +469,19 @@ body {
 .modal-box {
   background: var(--color-cream);
   color: var(--color-navy);
-  border-radius: 24px;
+  border: 1px solid #003049;
+  border-radius: 20px;
+  overflow: hidden;
   width: 100%;
   max-width: 420px;
   max-height: 80vh;
-  overflow: hidden;        /* clips everything to the rounded corners */
+  overflow: hidden;        
   box-shadow: 0 10px 0px -5px rgba(98, 98, 98, 0.5);
   animation: modal-pop 0.25s ease;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  pointer-events: auto;   /* but the modal itself still receives clicks */
+  pointer-events: auto;   
 
   -webkit-mask-image: -webkit-radial-gradient(white, black); /* forces proper corner clipping in Safari/Chrome */
 }
@@ -522,6 +524,7 @@ body {
   line-height: 1.6;
   overflow-y: auto;
   flex: 1;
+  
 
   scrollbar-width: thin;                         /* Firefox */
   scrollbar-color: var(--color-blue) transparent; /* Firefox */
@@ -544,6 +547,12 @@ body {
   background: var(--color-maroon);
 }
 
+.modal-content::-webkit-scrollbar-button {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 .modal-floating {
   position: fixed;
   bottom: 24px;
@@ -558,7 +567,6 @@ body {
   justify-content: space-between;
   background: var(--color-navy);
   padding: 12px 18px;
-  border-radius: 24px 24px 0 0;
   cursor: grab;
   flex-shrink: 0;           /* header never shrinks or scrolls */
 }

@@ -8,8 +8,24 @@ import pinIcon from "./icons/pinIcon.svg";
 import aboutIcon from "./icons/About_Icon.svg";
 import projectIcon from "./icons/Projects_Icon.svg";
 
+import useSound from 'use-sound';
+
 export default function Hero({ onSwitchPage }) {
   const [openPopups, setOpenPopups] = useState(new Set());
+  const [play] = useSound('/sfx/buttonClick.mp3', {
+    volume: 0.4,
+    onload: () => console.log('sound loaded'),
+    onloaderror: (id, err) => console.error('sound load error', err),
+    onplayerror: (id, err) => console.error('sound play error', err),
+  });
+
+  const soundProps = {
+    onPointerDown: () => play(),
+    onKeyDown: (e) => {
+      if (!e.repeat && (e.key === 'Enter' || e.key === ' ')) play();
+    },
+  };
+
 
   const openModal = (key) => {
     setOpenPopups((prev) => new Set(prev).add(key));
@@ -55,6 +71,7 @@ export default function Hero({ onSwitchPage }) {
               <button
                 type="button"
                 className="logo-morph-btn"
+                {...soundProps}
                 onClick={onSwitchPage}
                 aria-label="Switch page"
               >
@@ -74,6 +91,7 @@ export default function Hero({ onSwitchPage }) {
                 type="button"
                 className="cta-btn icon-btn primary"
                 aria-label="About me"
+                {...soundProps}
                 onClick={() => openModal("about")}
               >
                 <img src={aboutIcon.src} alt="" className="cta-icon" />
@@ -82,6 +100,7 @@ export default function Hero({ onSwitchPage }) {
                 type="button"
                 className="cta-btn icon-btn secondary"
                 aria-label="See the work"
+                {...soundProps}
                 onClick={() => openModal("projectsT")}
               >
                 <img src={projectIcon.src} alt="" className="cta-icon" />

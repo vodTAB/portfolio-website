@@ -141,8 +141,8 @@ export async function POST(request) {
       .prepare(
         `INSERT INTO illustrations (
           id, title, description, date, tools, sort_order,
-          thumbnail_file_id, full_file_id, social_link
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+          thumbnail_key, full_key, social_link
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
       )
       .bind(
         id,
@@ -167,8 +167,8 @@ export async function POST(request) {
           date,
           tools,
           sort_order: sortOrder,
-          thumbnail_file_id: thumbnailKey,
-          full_file_id: fullImageKey,
+          thumbnail_key: thumbnailKey,
+          full_key: fullImageKey,
           social_link: socialLink,
           thumbnail_url: `/api/illustrations/${id}/thumbnail`,
         },
